@@ -211,6 +211,7 @@ void Solve_StrategyParallel( struct Solver* solver ) {
 void Solve_NeighbourParallel( struct Solver* solver ) {
 	unsigned int y, x;
 	unsigned int i, j;
+
 	static Strategy strategies[6][4];
 	unsigned int change;
 	change = 0;
@@ -236,16 +237,31 @@ void Solve_NeighbourParallel( struct Solver* solver ) {
 
 	//Loop trough strategies
 	for( i = 0; i < 6; i++ ) {
-#pragma omp parallel for
-
+		change = 0;
 		//loop trought x positions
 		for( x = 0; x < solver->sudoku->length; x++ ) {
 			//Loop trought y positions
 			for( y = 0; y < solver->sudoku->length; y++ ) {
 				//skip cell if cell is not empty
 				if( solver->sudoku->cellvalue[y][x] != 0 ) continue;
+				//execute strategy 0 first (because its neighbourhoodless)
+				if( strategies[0][3] != NULL ) {
+					if( strategies[0][3]( solver->sudoku, x, y ) != 0 ) {
+#if (defined(_DEBUG) || defined(FORCEDEBUGMESSAGES)) && defined(PRINTCHANGEDCELL)
+						wprintf_s( L"_DEBUG: gridloop\nchanged by rule%i\n(x:%iy:%i)=%i\n", i, x, y, solver->sudoku->cellvalue[y][x] );
+#ifdef PRINTCHANGEDGRID
+						Sudoku_Print( solver->sudoku );
+#endif
+#endif
+#if defined(SUDOKU_UI)
+						RefreshDebugWindow();
+#endif
+						change |= 1;
+					}
+				}
 
-				for( j = i == 0 ? 3 : 0; j < i == 0 ? 4 : 3; j++ ) {
+#pragma omp parallel for
+				for( j = 0; j < 3; j++ ) {
 					if( strategies[i][j] != NULL ) {
 
 						//execute strategy
@@ -268,6 +284,7 @@ void Solve_NeighbourParallel( struct Solver* solver ) {
 						}
 					}
 				}
+				if( x == ( unsigned int )-1 ) break;
 			}
 		} //end omp for
 
@@ -302,9 +319,9 @@ void Solve_NeighbourGridParallel( struct Solver* solver ) {
 
 	//Loop trough strategies
 	for( i = 0; i < 6; i++ ) {
+		change = 0;
 #pragma omp parallel for
-
-		for( j = i == 0 ? 3 : 0; j < i == 0 ? 4 : 3; j++ ) {
+		for( j = 0; j < 4; j++ ) {
 			if( strategies[i][j] != NULL ) {
 				unsigned int y, x;
 

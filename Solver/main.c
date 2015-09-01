@@ -225,9 +225,7 @@ int wmain( int argc, wchar_t* argv[] ) {
 			timerun = Stopwatch_GetTime( &stopwatch );
 			//add current time to overall timesum
 			//used to get more consistent
-#if defined(_DEBUG) || defined(MULTIRUN)
 			timerun_added += timerun;
-#endif
 		}
 
 
@@ -237,7 +235,7 @@ int wmain( int argc, wchar_t* argv[] ) {
 		switch( rc ) {
 		case VALIDATION_EMPTYCELL:
 			if( ctTryAndErrorSteps >= TRY_AND_ERROR_MAXSTEPCOUNT ) {
-				wprintf_s( L"_DEBUG: maximum number of try and error steps reached.\nv_DEBUG: validation failed.\n" );
+				wprintf_s( L"_DEBUG: maximum number of try and error steps reached.\nvalidation failed.\n" );
 				break;
 			}
 			//there are empty cells left, create sudoku copy and fill first free cell with first candidate
@@ -264,7 +262,7 @@ int wmain( int argc, wchar_t* argv[] ) {
 			break;
 		case VALIDATION_CONFLICT:
 			if( ctTryAndErrorSteps >= TRY_AND_ERROR_MAXSTEPCOUNT ) {
-				wprintf_s( L"_DEBUG: maximum number of try and error steps reached.\nv_DEBUG: validation failed.\n" );
+				wprintf_s( L"_DEBUG: maximum number of try and error steps reached.\nvalidation failed.\n" );
 				break;
 			}
 #if defined(SUDOKU_UI)
@@ -293,8 +291,8 @@ int wmain( int argc, wchar_t* argv[] ) {
 			}
 			break;
 		case VALIDATION_SUCCESS:
-#if (defined( _DEBUG ) && !defined(MULTIRUN)) || defined(FORCEDEBUGMESSAGES)
-			wprintf_s( L"_DEBUG: validation successful.\n" );
+#if !defined(MULTIRUN) || defined(FORCEDEBUGMESSAGES)
+			wprintf_s( L"validation successful.\n" );
 #endif
 			break;
 		}
@@ -345,9 +343,9 @@ int wmain( int argc, wchar_t* argv[] ) {
 	//validate the returned solution
 	//only distinguish success and failure
 	rc = Sudoku_Validate( &sudoku );
-#if (defined( _DEBUG ) && !defined(MULTIRUN)) || defined(FORCEDEBUGMESSAGES)
-	if( rc == VALIDATION_SUCCESS ) wprintf_s( L"_DEBUG: validation successful.\n" );
-	else wprintf_s( L"_DEBUG: validation failed.\n" );
+#if !defined(MULTIRUN) || defined(FORCEDEBUGMESSAGES)
+	if( rc == VALIDATION_SUCCESS ) wprintf_s( L"validation successful.\n" );
+	else wprintf_s( L"validation failed.\n" );
 #endif
 
 #endif
@@ -366,6 +364,8 @@ int wmain( int argc, wchar_t* argv[] ) {
 	//close window
 	//(terminates ui thread)
 	CloseDebugWindow();
+#elif !defined(_DEBUG) && defined(FORCE_KEEPALIVE) && !defined(MULTIRUN)
+	getchar();
 #endif
 
 	return rc;
