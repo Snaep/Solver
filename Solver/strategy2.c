@@ -16,10 +16,8 @@ int strategy2( struct Sudoku* sud, unsigned int x, unsigned int y ) {
 
 	//loop through candidates
 	for( i = 0; i < sud->length; i++ ) {
-
 		//wenn kandidat gefunden
 		if( ( sud->grid[y][x] & ( 1ll << i ) ) != 0 ) {
-
 			//wenn kandidat an keiner anderen Stelle in Spalte möglich ist
 			//Setze Zellwert
 			if( ( col & ( 1ll << i ) ) == 0 ) {
@@ -38,10 +36,8 @@ int strategy2( struct Sudoku* sud, unsigned int x, unsigned int y ) {
 
 	//loop through candidates
 	for( i = 0; i < sud->length; i++ ) {
-
 		//wenn kandidat gefunden
 		if( sud->grid[y][x][i] != 0 ) {
-
 			//wenn kandidat an keiner anderen Stelle in Reihe möglich ist
 			//Setze Zellwert
 			j = 1;

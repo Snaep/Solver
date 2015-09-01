@@ -9,6 +9,9 @@
 #define NEIGHBOURHOOD_COL 1
 #define NEIGHBOURHOOD_BOX 2
 
+#define SUDOKU_SUBSET_MIN 3
+#define SUDOKU_SUBSET_MAX 4
+
 #define BOXINDEX(sud, x, y) ( ( y / sud->length_of_box ) * sud->length_of_box + x / sud->length_of_box )
 
 #define SUDOKUERROR_FILE (-1)
@@ -21,6 +24,7 @@
 #define VALIDATION_EMPTYCELL -1
 #define VALIDATION_CONFLICT -2
 #define VALIDATION_PHASE1FAILED -3
+
 
 #ifdef SUDOKU_CELLTYPE_BITVECTOR
 typedef unsigned long long SudokuCell;

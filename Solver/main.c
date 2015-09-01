@@ -48,9 +48,9 @@ int wmain( int argc, wchar_t* argv[] ) {
 	rc = run( argc, argv );
 	wprintf_s( L"\nsolver returned: %i\n", rc );
 #ifdef STOPWATCH_MODE_SECONDS
-	wprintf_s( L"time solver: %.3fms\n", timesum * 1000 );
+	wprintf_s( L"time run: %.3fms\n", timesum * 1000 );
 #else
-	wprintf_s( L"time solver: %I64d\n", timesum );
+	wprintf_s( L"time run: %I64d\n", timesum );
 #endif
 	//wait for confimation
 	getchar();

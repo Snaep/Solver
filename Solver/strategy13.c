@@ -14,24 +14,28 @@ int strategy13( struct Sudoku* sud, unsigned int x, unsigned  int y ) {
 
 	j = 0;
 
+	//count number of empty cells in neighbourhood
 	for( i = 0; i < sud->length; i++ ) {
 		if( sud->cellvalue[i][x] == 0 && i != y ) {
 			index[j++] = i;
 		}
 	}
 
-	if( j <= 3 ) return 0;
+	if( j <= SUDOKU_SUBSET_MIN ) return 0;
 
-
-	for( i = 2; i < 4; i++ ) {
+	//for defined subset sizes
+	for( i = SUDOKU_SUBSET_MIN; i <= SUDOKU_SUBSET_MAX; i++ ) {
 		Combinator_Initialize( &c, i, index, j );
 		combination[i] = y;
 
+		//for each available combination
 		while( Combinator_GetNext( &c, combination ) == 0 ) {
 			subset = 0ll;
 
 			for( j = 0; j <= i; j++ ) {
 				for( k = j + 1; k <= i; k++ ) {
+					//combine all subsets
+					//create validation mask
 					if( sud->grid[combination[j]][x] & sud->grid[combination[k]][x] ) {
 						cellok |= ( ( 1 << j ) | ( 1 << k ) );
 						subset |= sud->grid[combination[j]][x] & sud->grid[combination[k]][x];
@@ -40,6 +44,7 @@ int strategy13( struct Sudoku* sud, unsigned int x, unsigned  int y ) {
 				}
 			}
 
+			//validate subset
 			if( __popcnt64( cellok ) != i + 1 ) continue;
 
 			for( j = 0; j < sud->length; j++ ) {
@@ -48,6 +53,7 @@ int strategy13( struct Sudoku* sud, unsigned int x, unsigned  int y ) {
 
 			if( __popcnt64( subset ) != i + 1 ) continue;
 
+			//remove other candidates from cells in subset
 			changed = 0;
 			for( j = 0; j < sud->length; j++ ) {
 				if( ( subset & ( 1ll << j ) ) != 0 ) {
@@ -77,24 +83,28 @@ int strategy13( struct Sudoku* sud, unsigned int x, unsigned  int y ) {
 
 	j = 0;
 
+	//count number of empty cells in neighbourhood
 	for( i = 0; i < sud->length; i++ ) {
 		if( sud->cellvalue[i][x] == 0 && i != y ) {
 			index[j++] = i;
 		}
 	}
 
-	if( j <= 3 ) return 0;
+	if( j <= SUDOKU_SUBSET_MIN ) return 0;
 
-
-	for( i = 2; i < 4; i++ ) {
+	//for defined subset sizes
+	for( i = SUDOKU_SUBSET_MIN; i <= SUDOKU_SUBSET_MAX; i++ ) {
 		Combinator_Initialize( &c, i, index, j );
 		combination[i] = y;
 
+		//for each available combination
 		while( Combinator_GetNext( &c, combination ) == 0 ) {
 
 			vinitl( subset, 0 );
 			for( j = 0; j <= i; j++ ) {
 				for( k = j + 1; k <= i; k++ ) {
+					//combine all subsets
+					//create validation mask
 					vandl( sud->grid[combination[j]][x], sud->grid[combination[k]][x], buffer );
 					if( vpopcntl( buffer ) != 0 ) {
 						cellok[j] = 1;
@@ -105,6 +115,7 @@ int strategy13( struct Sudoku* sud, unsigned int x, unsigned  int y ) {
 				}
 			}
 
+			//validate subset
 			if( vpopcntl( cellok ) != i + 1 ) continue;
 
 			for( j = 0; j < sud->length; j++ ) {
@@ -113,13 +124,13 @@ int strategy13( struct Sudoku* sud, unsigned int x, unsigned  int y ) {
 
 			if( vpopcntl( subset ) != i + 1 ) continue;
 
+			//remove other candidates from cells in subset
 			changed = 0;
 			for( j = 0; j < sud->length; j++ ) {
 				if( subset[j] != 0 ) {
 					vnotl( subset, buffer );
 					vandl( buffer, sud->grid[j][x], buffer );
 					changed += vpopcntl( buffer );
-
 					vandl( sud->grid[j][x], subset, sud->grid[j][x] );
 				}
 			}

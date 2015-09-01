@@ -1,7 +1,6 @@
 #include "strategies.h"
 
-//prüft ob ein Wert innerhalb einer Zeile
-//nur in der aktuellen Zelle möglich ist
+//hidden single row
 #ifdef SUDOKU_CELLTYPE_BITVECTOR
 int strategy1( struct Sudoku* sud, unsigned int x, unsigned  int y ) {
 	unsigned int i;
@@ -36,10 +35,8 @@ int strategy1( struct Sudoku* sud, unsigned int x, unsigned  int y ) {
 
 	//loop through candidates
 	for( i = 0; i < sud->length; i++ ) {
-
 		//wenn kandidat gefunden
 		if( sud->grid[y][x][i] != 0 ) {
-
 			//wenn kandidat an keiner anderen Stelle in Reihe möglich ist
 			//Setze Zellwert
 			j = 1;
