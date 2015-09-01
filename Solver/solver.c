@@ -3,7 +3,7 @@
 #include "debugwindow.h"
 
 //------------------------------------------------
-//edit this array to change ruleset !
+//available strategies
 static const Strategy availableStrategies[] = {
 	&strategy0,
 	&strategy1,
@@ -23,14 +23,15 @@ static const Strategy availableStrategies[] = {
 	&strategy15
 };
 
-//------------------------------------------------
 #define NUM_STRATEGIES (sizeof(availableStrategies) / sizeof(Strategy))
+//------------------------------------------------
 
-void Solve_Sequential( struct Solver* solver );
-void Solve_CellParallel( struct Solver* solver );
-void Solve_StrategyParallel( struct Solver* solver );
-void Solve_NeighbourParallel( struct Solver* solver );
-void Solve_NeighbourGridParallel( struct Solver* solver );
+//available solver variants
+static void Solve_Sequential( struct Solver* solver );
+static void Solve_CellParallel( struct Solver* solver );
+static void Solve_StrategyParallel( struct Solver* solver );
+static void Solve_NeighbourParallel( struct Solver* solver );
+static void Solve_NeighbourGridParallel( struct Solver* solver );
 
 static const SolverFunq solverfunctions[] = {
 	&Solve_Sequential,
@@ -39,21 +40,30 @@ static const SolverFunq solverfunctions[] = {
 	&Solve_NeighbourParallel,
 	&Solve_NeighbourGridParallel
 };
+//------------------------------------------------
 
 int Solver_Initialize( struct Solver* solver, int strategies, int mode ) {
 	int i, j;
 
+	//validate parameters
 	if( solver == NULL || strategies == 0 ) return -2;
-
+	
+	//count selected strategies
 	solver->ctStrategies = __popcnt( strategies );
+	//return with error if no strategy selected
+	if( solver->ctStrategies == 0 ) return -3;
+
+	//allocate strategy vector
 	solver->strategies = ( Strategy* )malloc( sizeof( Strategy ) * solver->ctStrategies );
 	if( solver->strategies == NULL ) return -1;
 
+	//create strategy pointer vector for solver
 	j = 0;
 	for( i = 0; i < NUM_STRATEGIES; i++ ) {
 		if( strategies & ( 1 << i ) ) solver->strategies[j++] = availableStrategies[i];
 	}
 
+	//store solver function and number of threads
 	solver->solverfunq = solverfunctions[mode & 0xFFFF];
 	solver->ctThreads = ( ( mode >> 16 ) & 0xFFFF );
 
@@ -65,11 +75,9 @@ void Solve_Sequential( struct Solver* solver ) {
 	unsigned int y, x, e;
 	unsigned int i;
 	unsigned int highestrule;
-	unsigned int stratcounter[16];
 
 	highestrule = 0;
 	change = 0;
-	memset( stratcounter, 0, sizeof( unsigned int ) * 16 );
 
 	for( e = 0; e < 5; e++ ) {
 		//Loop trought rules
@@ -78,7 +86,9 @@ void Solve_Sequential( struct Solver* solver ) {
 			for( x = 0; x < solver->sudoku->length; x++ ) {
 				//Loop trought y positions
 				for( y = 0; y < solver->sudoku->length; y++ ) {
+					//skip cell if cell is not empty
 					if( solver->sudoku->cellvalue[y][x] != 0 ) continue;
+					//execute strategy
 					if( ( change = solver->strategies[i]( solver->sudoku, x, y ) ) != 0 ) {
 #if (defined(_DEBUG) || defined(FORCEDEBUGMESSAGES)) && defined(PRINTCHANGEDCELL)
 						wprintf_s( L"_DEBUG: gridloop\nchanged by rule%i\n(x:%iy:%i)=%i\n", i, x, y, solver->sudoku->cellvalue[y][x] );
@@ -89,7 +99,7 @@ void Solve_Sequential( struct Solver* solver ) {
 #if defined(SUDOKU_UI)
 						RefreshDebugWindow();
 #endif
-						stratcounter[i]++;
+						//reset loops to restart with first cell
 						highestrule = max( highestrule, i );
 						x = ( unsigned int )-1;
 						change = 0;
@@ -102,10 +112,7 @@ void Solve_Sequential( struct Solver* solver ) {
 	}
 
 #if defined(_DEBUG) || defined(FORCEDEBUGMESSAGES)
-	wprintf_s( L"_DEBUG: highest rule: %i\nused rules:\n", highestrule );
-	for( i = 0; i < solver->ctStrategies; i++ ) {
-		wprintf_s( L"[%i]:%i\n", i, stratcounter[i] );
-	}
+	wprintf_s( L"_DEBUG: highest rule: %i\n", highestrule );
 #endif
 }
 
@@ -129,8 +136,10 @@ void Solve_CellParallel( struct Solver* solver ) {
 			x = j % solver->sudoku->length;
 			y = j / solver->sudoku->length;
 
+			//skip cell if cell is not empty
 			if( solver->sudoku->cellvalue[y][x] != 0 ) continue;
 
+			//execute strategy
 			if( solver->strategies[i]( solver->sudoku, x, y ) != 0 ) {
 #if (defined(_DEBUG) || defined(FORCEDEBUGMESSAGES)) && defined(PRINTCHANGEDCELL)
 				wprintf_s( L"_DEBUG: gridloop\nchanged by rule%i\n(x:%iy:%i)=%i\n", i, x, y, solver->sudoku->cellvalue[y][x] );
@@ -142,6 +151,7 @@ void Solve_CellParallel( struct Solver* solver ) {
 				RefreshDebugWindow();
 #endif
 
+				//signal changed cell(s)
 				change |= 1;
 			}
 		} //end of omp loop
@@ -173,7 +183,9 @@ void Solve_StrategyParallel( struct Solver* solver ) {
 			for( x = 0; x < solver->sudoku->length; x++ ) {
 				//Loop trought y positions
 				for( y = 0; y < solver->sudoku->length; y++ ) {
+					//skip cell if cell is not empty
 					if( solver->sudoku->cellvalue[y][x] != 0 ) continue;
+					//execute strategy
 					if( solver->strategies[i]( solver->sudoku, x, y ) != 0 ) {
 #if (defined(_DEBUG) || defined(FORCEDEBUGMESSAGES)) && defined(PRINTCHANGEDCELL)
 						wprintf_s( L"_DEBUG: gridloop\nchanged by rule%i\n(x:%iy:%i)=%i\n", i, x, y, solver->sudoku->cellvalue[y][x] );
@@ -184,6 +196,7 @@ void Solve_StrategyParallel( struct Solver* solver ) {
 #if defined(SUDOKU_UI)
 						RefreshDebugWindow();
 #endif
+						//signal changed cell(s)
 						change |= 1;
 					}
 				}
@@ -229,11 +242,13 @@ void Solve_NeighbourParallel( struct Solver* solver ) {
 		for( x = 0; x < solver->sudoku->length; x++ ) {
 			//Loop trought y positions
 			for( y = 0; y < solver->sudoku->length; y++ ) {
+				//skip cell if cell is not empty
 				if( solver->sudoku->cellvalue[y][x] != 0 ) continue;
 
 				for( j = i == 0 ? 3 : 0; j < i == 0 ? 4 : 3; j++ ) {
 					if( strategies[i][j] != NULL ) {
 
+						//execute strategy
 						if( strategies[i][j]( solver->sudoku, x, y ) != 0 ) {
 
 #if (defined(_DEBUG) || defined(FORCEDEBUGMESSAGES)) && defined(PRINTCHANGEDCELL)
@@ -246,6 +261,7 @@ void Solve_NeighbourParallel( struct Solver* solver ) {
 							RefreshDebugWindow();
 #endif
 
+							//reset loops to restart with first cell
 							x = ( unsigned int )-1;
 							change |= 1;
 							break;
@@ -296,7 +312,9 @@ void Solve_NeighbourGridParallel( struct Solver* solver ) {
 				for( x = 0; x < solver->sudoku->length; x++ ) {
 					//Loop trought y positions
 					for( y = 0; y < solver->sudoku->length; y++ ) {
+						//skip cell if cell is not empty
 						if( solver->sudoku->cellvalue[y][x] != 0 ) continue;
+						//execute strategy
 						if( strategies[i][j]( solver->sudoku, x, y ) != 0 ) {
 #if (defined(_DEBUG) || defined(FORCEDEBUGMESSAGES)) && defined(PRINTCHANGEDCELL)
 							wprintf_s( L"_DEBUG: gridloop\nchanged by strategy%i\n(x:%iy:%i)=%i\n", i, x, y, solver->sudoku->cellvalue[y][x] );
@@ -307,7 +325,7 @@ void Solve_NeighbourGridParallel( struct Solver* solver ) {
 #if defined(SUDOKU_UI)
 							RefreshDebugWindow();
 #endif
-
+							//reset loops to restart with first cell
 							x = ( unsigned int )-1;
 							change |= 1;
 							break;
@@ -323,13 +341,18 @@ void Solve_NeighbourGridParallel( struct Solver* solver ) {
 
 
 int Solver_Solve( struct Solver* solver, struct Sudoku* sudoku ) {
+	//validate parameter
 	if( solver == NULL || sudoku == NULL ) return -1;
 
+	//store sudoku
 	solver->sudoku = sudoku;
+
+	//set number of threads
 	if( solver->solverfunq != &Solve_Sequential ) {
 		omp_set_num_threads( solver->ctThreads );
 	}
 
+	//start solver
 	solver->solverfunq( solver );
 
 	return 0;

@@ -31,9 +31,6 @@ struct Solver {
 ///<param name="solver" direction="in, out">
 ///Ein Zeiger auf die zu initialisierende Solver-Instanz 
 ///</param>
-///<param name="sudoku" direction="in">
-///Ein Zeiger auf ein Sudoku, welches mit den angegebenen Parametern gelöst werden soll
-///</param>
 ///<param name="strategies" direction="in">
 ///Ein vier Byte langes Bitmuster, welches die zu verwendenden Strategien enthält
 ///</param>
@@ -54,6 +51,7 @@ struct Solver {
 ///Die Funktion kann fehlschlagen wenn
 ///Kein Speicher verfügbar ist( Rückgabewert: -1 )
 ///Ein oder mehrere Parameter ungültig sind( Rückgabewert: -2 )
+///
 ///Ausgewählte nichtexistente Strategien werden ohne Fehlermeldung ignoriert.
 ///</remarks>
 ///
@@ -61,16 +59,18 @@ int Solver_Initialize( struct Solver* solver, int strategies, int mode );
 
 ///
 ///<summary>
-///Die Funktion löst ein Sudoku mit den in der Solver-Instanz angegebenen Parametern
+///Die Funktion löst das angegebene Sudoku mit den in der Solver-Instanz angegebenen Parametern
 ///</summary>
 ///<param name="solver" direction="in, out">
-///Ein Zeiger auf eine Solver-Instanz, deren Sudoku gelöst werden soll 
+///Ein Zeiger auf eine Solver-Instanz, dessen Konfiguration zur Lösung verwendet werden soll
+///</param>
+///<param name="sudoku" direction="in, out">
+///Ein Zeiger auf die Sudoku-Instanz, die gelöst werden soll
 ///</param>
 ///<remarks>
-///Die Funktion kann fehlschlagen wenn
-///Kein Speicher verfügbar ist( Rückgabewert: -1 )
-///Ein oder mehrere Parameter ungültig sind( Rückgabewert: -2 )
-///Ausgewählte nichtexistente Strategien werden ohne Fehlermeldung ignoriert.
+///Die Funktion schlägt fehl, wenn einer der Parameter NULL ist.
+///In Falle eines Fehlschlags wird ein Wert kleiner 0 zurückgegeben.
+///Bei Erfolg wird 0 zurückgegeben.
 ///</remarks>
 ///
 int Solver_Solve( struct Solver* solver, struct Sudoku* sudoku );

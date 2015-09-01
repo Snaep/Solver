@@ -25,11 +25,11 @@ int ParameterSet_Parse( struct ParameterSet* set, wchar_t** argv ) {
 
 		//Parameter:
 		//strategies:
-		// -st[0-9]
+		// -st[0-99]
 		//parallelization:
 		// -par=[0-9]
 		//no of threads:
-		//-tc=[0-16]
+		//-tc=[0-99]
 		//sudoku filepath:
 		// -sud=path
 		//trennzeichen: (optional)
@@ -78,7 +78,7 @@ int ParameterSet_Parse( struct ParameterSet* set, wchar_t** argv ) {
 			set->solvertype |= ( j << 16 );
 			break;
 		default:
-			wprintf( L"Unknown parameter: '%s'\nfound at position: %i", argv[i], i );
+			wprintf( L"Unknown parameter: '%s'\nfound at position: %i\n", argv[i], i );
 			break;
 		}
 	}

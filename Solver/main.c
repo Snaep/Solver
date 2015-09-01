@@ -236,16 +236,16 @@ int wmain( int argc, wchar_t* argv[] ) {
 		rc = Sudoku_Validate( sudoku_current );
 		switch( rc ) {
 		case VALIDATION_EMPTYCELL:
-			if( ctTryAndErrorSteps > TRY_AND_ERROR_MAXSTEPCOUNT ) {
+			if( ctTryAndErrorSteps >= TRY_AND_ERROR_MAXSTEPCOUNT ) {
 				wprintf_s( L"_DEBUG: maximum number of try and error steps reached.\nv_DEBUG: validation failed.\n" );
 				break;
 			}
 			//there are empty cells left, create sudoku copy and fill first free cell with first candidate
 			switch( SudokuStack_GetNextModification( &sudokustack, &sudoku_current ) ) {
-			case SUDOKUSTACK_FULL:
+			case SUDOKUSTACKERROR_FULL:
 				wprintf_s( L"E: sudokustack is full\nvalidation failed.\n" );
 				break;
-			case SUDOKUSTACK_OUTOFMEMORY:
+			case SUDOKUSTACKERROR_OUTOFMEMORY:
 			case SUDOKUERROR_OUTOFMEMORY:
 				wprintf_s( L"E: out of memory\nvalidation failed.\n" );
 				return EXIT_FAILURE;
@@ -263,7 +263,7 @@ int wmain( int argc, wchar_t* argv[] ) {
 			}
 			break;
 		case VALIDATION_CONFLICT:
-			if( ctTryAndErrorSteps > TRY_AND_ERROR_MAXSTEPCOUNT ) {
+			if( ctTryAndErrorSteps >= TRY_AND_ERROR_MAXSTEPCOUNT ) {
 				wprintf_s( L"_DEBUG: maximum number of try and error steps reached.\nv_DEBUG: validation failed.\n" );
 				break;
 			}
@@ -274,11 +274,11 @@ int wmain( int argc, wchar_t* argv[] ) {
 			ChangeDebugWindow( NULL );
 #endif
 			switch( SudokuStack_GetNextSudoku( &sudokustack, &sudoku_current ) ) {
-			case SUDOKUSTACK_OUTOFMEMORY:
+			case SUDOKUSTACKERROR_OUTOFMEMORY:
 			case SUDOKUERROR_OUTOFMEMORY:
 				wprintf_s( L"E: out of memory\nvalidation failed.\n" );
 				return EXIT_FAILURE;
-			case SUDOKUSTACK_EMPTY:
+			case SUDOKUSTACKERROR_EMPTY:
 				break;
 			case 0:
 #if defined(SUDOKU_UI)

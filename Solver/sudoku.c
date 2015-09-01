@@ -9,9 +9,11 @@ unsigned char* ReadAllBytes( const wchar_t * file ) {
 
 	if( _wfopen_s( &fptr, file, L"r" ) != 0 ) return NULL;
 
+	//determinate file size
 	fseek( fptr, 0, SEEK_END );
 	len = ftell( fptr );
 
+	//allocate and read complete file
 	retv = ( unsigned char* )malloc( len * sizeof( unsigned char ) + sizeof( unsigned char ) );
 	if( retv != NULL ) {
 		fseek( fptr, 0, SEEK_SET );
@@ -19,6 +21,7 @@ unsigned char* ReadAllBytes( const wchar_t * file ) {
 		retv[len] = L'\0';
 	}
 
+	//close file
 	fclose( fptr );
 	return retv;
 }
@@ -150,6 +153,8 @@ int Sudoku_Allocate( struct Sudoku* sud ) {
 #endif
 
 	//i:y j:x
+	//fill box pointer arrays with pointer to cells inside
+	//the same box
 	for( i = 0; i < sud->length; i += sud->length_of_box ) {
 		for( j = 0; j < sud->length; j += sud->length_of_box ) {
 			for( cellindex = 0; cellindex < sud->length; cellindex++ ) {
@@ -186,6 +191,8 @@ int Sudoku_ParseFile( struct Sudoku* sud, const wchar_t* filepath, const wchar_t
 		goto END;
 
 	}
+
+	//determinate length of a box and validate square sudoku
 	sud->length_of_box = ( int )( 0.5f + sqrt( sud->length ) );
 	if( sud->length_of_box * sud->length_of_box != sud->length ) {
 		return SUDOKUERROR_GRIDSIZE;
@@ -293,23 +300,35 @@ int Sudoku_SetCell( struct Sudoku* sud, unsigned int x, unsigned int y, unsigned
 void Sudoku_Print( struct Sudoku* sud ) {
 	unsigned int i, j, k;
 	printf( "\r\n" );
+	//y - iteration
 	for( i = 0; i < sud->length; i++ ) {
+		//on box index, print box border
 		if( i && i % sud->length_of_box == 0 ) {
 			for( k = 0; k < CONSOLE_WIDTH; k++ ) printf( "-" );
 			printf( "\r\n" );
 		}
+		//x - iteration
 		for( j = 0; j < sud->length; j++ ) {
+			//on box index, print box border
 			if( j && j % sud->length_of_box == 0 ) printf( "|" );
+			//if cell is set, print cellvalue
 			if( sud->cellvalue[i][j] != 0 ) {
 				if( sud->cellvalue[i][j] < 10 ) {
 					printf( "  %i", sud->cellvalue[i][j] );
 				} else {
 					printf( " %i", sud->cellvalue[i][j] );
 				}
-			} else printf( "   " );
+			} else {
+				//if cell is empty
+				//fill space between cells
+				//with ' '
+				printf( "   " );
+			}
 		}
 		printf( "\r\n" );
 	}
+
+	//print seperator
 	printf( "\r\n" );
 	for( k = 0; k < CONSOLE_WIDTH; k++ ) printf( "--" );
 	printf( "\r\n\r\n" );
@@ -319,19 +338,29 @@ int Sudoku_ValidatePhase1( struct Sudoku* sud ) {
 	unsigned int i, j, k;
 
 #ifdef SUDOKU_CELLTYPE_BITVECTOR
+	//iterate over all neighbourhoodtypes
 	for( i = 0; i < 3; i++ ) {
+		//iterate over all neighbourhoods of given type 
 		for( j = 0; j < sud->length; j++ ) {
+			//if a neighbourhood exists, that does not contain all candidates
+			//there is a empty cell or a candidat occurs multiple times within 
+			//that neighbourhood
 			if( sud->contains[i][j] != ( ( 1 << sud->length ) - 1 ) ) return VALIDATION_PHASE1FAILED;
 		}
 	}
 #else
+	//iterate over all neighbourhoodtypes
 	for( i = 0; i < 3; i++ ) {
+		//iterate over all neighbourhoods of given type 
 		for( j = 0; j < sud->length; j++ ) {
 			for( k = 0; k < sud->length; k++ ) {
+				//if a neighbourhood exists, that does not contain all candidates
+				//there is a empty cell or a candidat occurs multiple times within 
+				//that neighbourhood
 				if( sud->contains[i][j][k] == 0 ) return VALIDATION_PHASE1FAILED;
 			}
 		}
-}
+	}
 #endif
 	return VALIDATION_SUCCESS;
 }
@@ -340,10 +369,19 @@ int Sudoku_ValidatePhase2( struct Sudoku* sud ) {
 	unsigned int i, j, k;
 
 #ifdef SUDOKU_CELLTYPE_BITVECTOR	
+	//loop through cells
 	for( i = 0; i < sud->length; i++ ) {
 		for( j = 0; j < sud->length; j++ ) {
+
+			//if empty cell found
+			//sulotion is invalid
 			if( sud->cellvalue[i][j] == 0 ) {
+
+				//iterate throug candidates
 				for( k = 0; k < sud->length; k++ ) {
+					//if candidat found
+					//and candidat is presetn in no neighbourhood
+					//the cell is empty
 					if( ( ( sud->grid[i][j] & ( 1ll << k ) ) != 0 ) && ( (
 						( ( sud->contains[NEIGHBOURHOOD_COL][j] & ( 1ll << k ) ) != 0 ) ||
 						( ( sud->contains[NEIGHBOURHOOD_ROW][i] & ( 1ll << k ) ) != 0 ) ||
@@ -351,6 +389,8 @@ int Sudoku_ValidatePhase2( struct Sudoku* sud ) {
 						return VALIDATION_EMPTYCELL;
 					}
 				}
+				//if all possible candidates are present in any of the neighbourhoods
+				//cell is conflicted
 				return VALIDATION_CONFLICT;
 			}
 		}
@@ -381,13 +421,18 @@ int Sudoku_ValidatePhase2( struct Sudoku* sud ) {
 				return VALIDATION_CONFLICT;
 			}
 		}
-			}
+	}
 #endif
 	return VALIDATION_SUCCESS;
 }
 
 int Sudoku_Validate( struct Sudoku* sud ) {
-	if( Sudoku_ValidatePhase1( sud ) == 0 ) return 0;
+	//validate phase1
+	//if phase1 validates sudoku
+	//there is no need for phase 2
+	if( Sudoku_ValidatePhase1( sud ) == VALIDATION_SUCCESS ) return VALIDATION_SUCCESS;
+
+	//validate phase2
 	return Sudoku_ValidatePhase2( sud );
 }
 
@@ -412,6 +457,7 @@ void Sudoku_Free( struct Sudoku* sud ) {
 			free( sud->cellvalue );
 		}
 
+		//free cellbox
 		if( sud->cellbox != NULL ) {
 			for( i = 0; i < sud->length; i += sud->length_of_box ) {
 				if( sud->cellbox[i] != NULL ) {
@@ -424,6 +470,7 @@ void Sudoku_Free( struct Sudoku* sud ) {
 			free( sud->cellbox );
 		}
 
+		//free cellboxvalue
 		if( sud->cellboxvalue != NULL ) {
 			for( i = 0; i < sud->length; i += sud->length_of_box ) {
 				if( sud->cellboxvalue[i] != NULL ) {

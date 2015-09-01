@@ -20,7 +20,7 @@ int strategy0( struct Sudoku* sud, unsigned int x, unsigned  int y ) {
 #else
 int strategy0( struct Sudoku* sud, unsigned int x, unsigned  int y ) {
 	unsigned int i;
-
+		
 	if( vpopcntl( sud->grid[y][x] ) == 1 ) {
 		for( i = 0; i < sud->length; i++ ) {
 			if( sud->grid[y][x][i] ) {

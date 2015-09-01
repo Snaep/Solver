@@ -150,7 +150,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam ) {
 		return 0;
 	case WM_PAINT:
 		onPaint( wParam, lParam );
-		ValidateRect( hWnd, NULL ); //creates infinite loop without validation
+		ValidateRect( hWnd, NULL );
 		return 0;
 	case WM_KEYDOWN:
 		return 0;
@@ -165,7 +165,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam ) {
 }
 
 void RefreshDebugWindow() {
-	//yes, sleep inside critical section.
 #pragma omp critical "debugwindow"
 {
 	onPaint( ( WPARAM )NULL, ( LPARAM )NULL );
@@ -185,12 +184,6 @@ void CloseDebugWindow() {
 	}
 }
 
-
-DWORD WINAPI RefreshLoop( LPVOID param ) {
-	while( TRUE ) {
-		onPaint( 0, 0 );
-	}
-}
 void ChangeDebugWindow( struct Sudoku* sud ) {
 	gsud = sud;
 	if( sud == NULL ) return;

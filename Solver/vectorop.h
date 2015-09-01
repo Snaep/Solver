@@ -14,7 +14,7 @@ void vnot( SudokuCell c1, SudokuCell cout, int length );
 int vpopcnt( SudokuCell c1, int length );
 //c == 0
 int viszero( SudokuCell c, int length );
-//c1 = c2
+//c1 |= c2
 void vset( SudokuCell c1, SudokuCell c2, int length );
 //c1 &= ~c2
 void vunset( SudokuCell c1, SudokuCell c2, int length );

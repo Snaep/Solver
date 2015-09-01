@@ -1,7 +1,12 @@
 #pragma once
 
+
 #define UNICODE
 #define _UNICODE
+
+#if !defined(_WIN32) && !defined(_WIN64) 
+#error solution limited to windows x86 or x64
+#endif
 
 #include <tchar.h>
 #include <Windows.h>
@@ -17,6 +22,11 @@
 //define to simulate argv
 #define FAKE_ARGV { L"-sud=\"Sudokus\\4\\medium\\med02.sud\"", L"-tc=1", L"-par=0", L"-time", L"-st0", L"-st1", L"-st2", L"-st3", L"-st4", L"-st5", L"-st6", L"-st7", L"-st8", L"-st9", L"-st10", L"-st11", L"-st12", L"-st13", L"-st14", L"-st15" }
 
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//please note that every enabled output to the console
+//or the ui invalidates the measured timings.
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 //define to print changes made to grid by strategy
 #define PRINTCHANGEDCELL
 
@@ -27,14 +37,15 @@
 //#define FORCEDEBUGMESSAGES
 
 //define to enable debug window
-#define SUDOKU_UI
+//#define SUDOKU_UI
 //define to remove step confirmation for ui refresh
-#define SUDOKU_UI_NOBLOCK
+//#define SUDOKU_UI_NOBLOCK
 
 //define this to use bit parallelized solver
 //#define SUDOKU_CELLTYPE_BITVECTOR
 
-//define to receive total elapsed seconds from stopwatch
+//define to set the timing mode to seconds
+//if undefined, PerformanceCounter output will be printed
 #define STOPWATCH_MODE_SECONDS
 
 //define to execute solver multiple times

@@ -5,7 +5,7 @@
 #include "vectorop.h"
 
 //--------------------------------------------------------------
-//add strategies here
+//summary of all available strategies
 
 int strategy0( struct Sudoku* sud, unsigned int x, unsigned int y );
 int strategy1( struct Sudoku* sud, unsigned int x, unsigned int y );
