@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="environment">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="environment\Stopwatch">
+      <UniqueIdentifier>{d0d0e9f6-ac64-4978-84ae-b9187a50971f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sudoku">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Sudoku\DebugWindow">
+      <UniqueIdentifier>{924ee05e-c93f-422d-8b50-cc80fa58cbb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sudoku\Sudoku">
+      <UniqueIdentifier>{f92b486c-06e3-4047-9ee8-2a2cd1e00ada}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sudoku\VectorOperations">
+      <UniqueIdentifier>{f2459b13-0be3-439d-8fd9-bb26562d2e2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Solver">
+      <UniqueIdentifier>{083c6055-8a1a-4753-be16-12a9a7a5b1e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="environment\Combinator">
+      <UniqueIdentifier>{ca810de3-3b95-49dc-86fa-3bd8848d537c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Solver\Solver">
+      <UniqueIdentifier>{255f0dd0-a272-461a-a219-ad3c178b822c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Solver\Strategies">
+      <UniqueIdentifier>{fd1608d0-2505-4183-b6bc-ab9078ef4f59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Solver\Strategies\implementations">
+      <UniqueIdentifier>{8811b7ef-f607-4651-9ffc-2a033bec895c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Solver\Strategies\implementations\Single Possibility">
+      <UniqueIdentifier>{25c807be-3fbb-46fc-9351-2748e4b8ec07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Solver\Strategies\implementations\Naked Subset">
+      <UniqueIdentifier>{9a86f003-028b-4174-9a10-631a7df505f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Solver\Strategies\implementations\Hidden Pair">
+      <UniqueIdentifier>{edc7b9ff-f182-458a-b505-dacd663a79f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Solver\Strategies\implementations\Hidden Subset">
+      <UniqueIdentifier>{110d2574-2f8c-4506-9457-f79e7cc354d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Solver\Strategies\implementations\Naked Pair">
+      <UniqueIdentifier>{28e140ae-8831-45f0-84e1-28535932c1ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="environment\Parameterset">
+      <UniqueIdentifier>{1bf4d9a5-5402-496a-b62a-4dcd73f8c608}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Solver\SudokuStack">
+      <UniqueIdentifier>{03b1aea4-296a-4f9c-b8bd-c33fdb932c4f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stopwatch.c">
+      <Filter>environment\Stopwatch</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c">
+      <Filter>environment</Filter>
+    </ClCompile>
+    <ClCompile Include="debugwindow.c">
+      <Filter>Sudoku\DebugWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="sudoku.c">
+      <Filter>Sudoku\Sudoku</Filter>
+    </ClCompile>
+    <ClCompile Include="vectorop.c">
+      <Filter>Sudoku\VectorOperations</Filter>
+    </ClCompile>
+    <ClCompile Include="combinator.c">
+      <Filter>environment\Combinator</Filter>
+    </ClCompile>
+    <ClCompile Include="solver.c">
+      <Filter>Solver\Solver</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy0.c">
+      <Filter>Solver\Strategies\implementations\Single Possibility</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy1.c">
+      <Filter>Solver\Strategies\implementations\Single Possibility</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy2.c">
+      <Filter>Solver\Strategies\implementations\Single Possibility</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy3.c">
+      <Filter>Solver\Strategies\implementations\Single Possibility</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy4.c">
+      <Filter>Solver\Strategies\implementations\Naked Pair</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy5.c">
+      <Filter>Solver\Strategies\implementations\Naked Pair</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy6.c">
+      <Filter>Solver\Strategies\implementations\Naked Pair</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy13.c">
+      <Filter>Solver\Strategies\implementations\Hidden Subset</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy14.c">
+      <Filter>Solver\Strategies\implementations\Hidden Subset</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy15.c">
+      <Filter>Solver\Strategies\implementations\Hidden Subset</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy7.c">
+      <Filter>Solver\Strategies\implementations\Hidden Pair</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy8.c">
+      <Filter>Solver\Strategies\implementations\Hidden Pair</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy9.c">
+      <Filter>Solver\Strategies\implementations\Hidden Pair</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy10.c">
+      <Filter>Solver\Strategies\implementations\Naked Subset</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy11.c">
+      <Filter>Solver\Strategies\implementations\Naked Subset</Filter>
+    </ClCompile>
+    <ClCompile Include="strategy12.c">
+      <Filter>Solver\Strategies\implementations\Naked Subset</Filter>
+    </ClCompile>
+    <ClCompile Include="parameterset.c">
+      <Filter>environment\Parameterset</Filter>
+    </ClCompile>
+    <ClCompile Include="sudokustack.c">
+      <Filter>Solver\SudokuStack</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stopwatch.h">
+      <Filter>environment\Stopwatch</Filter>
+    </ClInclude>
+    <ClInclude Include="defaults.h">
+      <Filter>environment</Filter>
+    </ClInclude>
+    <ClInclude Include="debugwindow.h">
+      <Filter>Sudoku\DebugWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="sudoku.h">
+      <Filter>Sudoku\Sudoku</Filter>
+    </ClInclude>
+    <ClInclude Include="vectorop.h">
+      <Filter>Sudoku\VectorOperations</Filter>
+    </ClInclude>
+    <ClInclude Include="combinator.h">
+      <Filter>environment\Combinator</Filter>
+    </ClInclude>
+    <ClInclude Include="solver.h">
+      <Filter>Solver\Solver</Filter>
+    </ClInclude>
+    <ClInclude Include="strategies.h">
+      <Filter>Solver\Strategies</Filter>
+    </ClInclude>
+    <ClInclude Include="parameterset.h">
+      <Filter>environment\Parameterset</Filter>
+    </ClInclude>
+    <ClInclude Include="sudokustack.h">
+      <Filter>Solver\SudokuStack</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
